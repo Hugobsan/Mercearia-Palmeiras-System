@@ -1,9 +1,4 @@
 # Mercearia Palmeiras System
  Commerce Management System for a Grocery from Coronel Murta on Minas Gerais.
-<iframe
-    src="https://drive.google.com/viewerng/viewer?embedded=true&url=https://github.com/Hugobsan/Mercearia-Palmeiras-System/blob/main/Readme%20Files/Mercearia%20Palmeiras.pdf#toolbar=0&scrollbar=0"
-    frameBorder="0"
-    scrolling="auto"
-    height="100%"
-    width="100%"
-></iframe>
+
+<iframe src="https://drive.google.com/file/d/1RHdpFKRT1cmwDqyW_TpSO29pvq1G4qaH/preview" width="100%" height="100%" frameBorder="0" allow="autoplay"></iframe>
