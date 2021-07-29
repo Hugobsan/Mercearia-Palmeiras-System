@@ -16,7 +16,7 @@ CREATE TABLE lancamento_estoque(
     id_produto int(10) NOT NULL,
     quant_recebida decimal(12,3) NOT NULL,
     preco_custo_un decimal(12,2) NOT NULL,
-    data_lancamento DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    data_lancamento DATE NOT NULL,
     
     PRIMARY KEY (id_lancamento),
     FOREIGN KEY(id_produto) references produto(id_produto)
@@ -56,7 +56,7 @@ DROP TABLE IF EXISTS caderneta;
 CREATE TABLE caderneta(
     id_caderneta int(10) NOT NULL AUTO_INCREMENT,
     id_cliente int(10) NOT NULL,
-    data_abertura DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    data_abertura DATE NOT NULL,
     status_caderneta varchar(12) NOT NULL DEFAULT 'aberta',
 
     PRIMARY KEY (id_caderneta),
@@ -101,7 +101,7 @@ DROP TABLE IF EXISTS fechamento_caixa;
 CREATE TABLE fechamento_caixa(
     id_fechamento INT(10) NOT NULL AUTO_INCREMENT,
     valor decimal(12,2) NOT NULL DEFAULT 0,
-    data DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    data DATE NOT NULL,
 
     PRIMARY KEY (id_fechamento)
 );
