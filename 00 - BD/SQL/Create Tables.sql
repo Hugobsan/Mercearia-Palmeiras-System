@@ -5,7 +5,7 @@ CREATE TABLE produto(
     nome varchar(80) NOT NULL UNIQUE,
     preco_venda decimal(12,2) NOT NULL DEFAULT 0,
     unidade_medida varchar(2) NOT NULL DEFAULT 'un',
-    quant_estoque decimal(12,3) NULL DEFAULT 0,
+    quant_estoque decimal(12,3) NULL UNSIGNED DEFAULT 0,
     
     PRIMARY KEY (id_produto)
 );
@@ -66,7 +66,7 @@ CREATE TABLE caderneta(
 DROP TABLE IF EXISTS venda;
 CREATE TABLE venda(
     id_venda int(10) NOT NULL AUTO_INCREMENT,
-    id_caderneta int(10) NOT NULL,
+    id_caderneta int(10) NULL,
     data DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     finalizada BOOLEAN NOT NULL DEFAULT 0,
 
