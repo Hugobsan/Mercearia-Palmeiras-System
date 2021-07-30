@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS produto;
 CREATE TABLE produto(
     id_produto int(10) NOT NULL AUTO_INCREMENT,
-    cod_barras varchar(30) NOT NULL UNIQUE,
+    cod_barras varchar(30) NULL UNIQUE,
     nome varchar(80) NOT NULL UNIQUE,
     preco_venda decimal(12,2) NOT NULL DEFAULT 0,
     unidade_medida varchar(2) NOT NULL DEFAULT 'un',
