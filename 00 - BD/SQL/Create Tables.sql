@@ -5,7 +5,7 @@ CREATE TABLE produto(
     nome varchar(80) NOT NULL UNIQUE,
     preco_venda decimal(12,2) NOT NULL DEFAULT 0,
     unidade_medida varchar(2) NOT NULL DEFAULT 'un',
-    quant_estoque decimal(12,3) NULL UNSIGNED DEFAULT 0,
+    quant_estoque decimal(12,3) NULL DEFAULT 0,
     
     PRIMARY KEY (id_produto)
 );

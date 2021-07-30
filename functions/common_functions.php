@@ -72,7 +72,7 @@ function cadastra_cliente($cpf, $nome, $telefone, $num, $cidade, $rua, $bairro){
     $sql="insert into cliente values(NULL,'$cpf','$nome');
     @id_cliente=(select max(id_cliente) from cliente);
     insert into telefone values(@id_cliente, '$telefone');
-    insert into endereco
+    insert into endereco values(@id_cliente, '$num', '$rua', '$bairro', '$cidade');
     ";
     
     if ($con->query($sql) == TRUE) {
@@ -83,5 +83,28 @@ function cadastra_cliente($cpf, $nome, $telefone, $num, $cidade, $rua, $bairro){
         header("");
     }
 }
-//
+//Função para lançamento de despesas
+function cadastra_despesa($custo_un, $descricao, $nome, $quant){
+    $sql="insert into despesa values(NULL, '$custo_un', '$descricao', '$nome', '$quant');";
+
+    if ($con->query($sql) == TRUE) {
+        fecharConexao($con);
+        header("");
+    } else {
+        fecharConexao($con);
+        header("");
+    }
+}
+//Função para lançamento de fechamentos de caixa
+function fecha_caixa($valor){
+    $sql="insert into fechamento_caixa values(NULL,'$valor', CURRENT_TIMESTAMP)";
+
+    if ($con->query($sql) == TRUE) {
+        fecharConexao($con);
+        header("");
+    } else {
+        fecharConexao($con);
+        header("");
+    }
+} 
 ?>
