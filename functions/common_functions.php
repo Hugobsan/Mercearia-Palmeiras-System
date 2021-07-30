@@ -1,16 +1,9 @@
 <?php
-require_once("00 - BD/bd_conexao.php");
 
 // Função para cadastro de produtos
 function cadastra_produto($cod_barras, $nome, $preco_venda, $unidade_medida, $quant_estoque){
-    $sql="insert into produto values (null, '$cod_barras', '$nome', '$preco_venda', '$unidade_medida', '$quant_estoque');";
-    if ($con->query($sql) == TRUE) {
-        fecharConexao($con);
-        header("");
-    } else {
-        fecharConexao($con);
-        header("");
-    }
+    $sql="INSERT INTO produto values (null, '$cod_barras', '$nome', '$preco_venda', '$unidade_medida', '$quant_estoque');";
+    return $sql; 
 }
 //Função para cadastro de vendas diretas, sem cadastro em caderneta.
 function venda_direta($id_produto, $quant){
