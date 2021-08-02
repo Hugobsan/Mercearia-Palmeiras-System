@@ -31,6 +31,14 @@ function exclui_produto($id_produto){
     return $sql;
 }
 
+//Função para exibir infomações básicas dos produtos
+function exibe_produto_min($id_produto){
+    $sql="SELECT nome, preco_venda, unidade_medida, quant_estoque FROM produto WHERE id_produto = '$id_produto'";
+    return $sql;
+}
+
+//Função para exibir informações completas dos produtos
+
 /* --- FIM DAS FUNÇÕES DA TABELA PRODUTO --- */
 
 
@@ -137,7 +145,7 @@ function exclui_caderneta($id_caderneta){
 /* --- FIM DE FUNÇÕES DA TABELA CADERNETA --- */
 
 
-/* --- INICIO DE FUNÇÕES DA TABELA CLIENTE--- */
+/* --- INICIO DE FUNÇÕES DA TABELA CLIENTE --- */
 
 //Função para cadastro de novo cliente.
 function cadastra_cliente($cpf, $nome, $telefone, $num, $cidade, $rua, $bairro){
@@ -182,7 +190,10 @@ function exclui_cliente($id_cliente){
     return $sql;
 }
 
-/* --- FIM DE FUNÇÕES DA TABELA CLIENTE--- */
+/* --- FIM DE FUNÇÕES DA TABELA CLIENTE --- */
+
+
+/* --- INICIO DE FUNÇÕES DA TABELA DESPESA --- */
 
 //Função para lançamento de despesas
 function cadastra_despesa($custo_un, $descricao, $nome, $quant){
@@ -190,10 +201,46 @@ function cadastra_despesa($custo_un, $descricao, $nome, $quant){
 
     return $sql;
 }
+
+//Função para edição de despesas
+function altera_despesa($id_despesa, $custo_un, $descricao, $nome, $quant){
+    $sql="UPDATE despesa SET custo_un='$custo_un', descricao='$descricao', nome='$nome', quant='$quant' WHERE id_despesa='$id_despesa';";
+
+    return $sql;
+}
+
+//Função para excluir despesas
+function exclui_despesa($id_despesa){
+    $sql="DELETE FROM despesa WHERE id_despesa='$id_despesa';";
+
+    return $sql;
+}
+
+/* --- FIM DE FUNÇÕES DA TABELA DESPESA --- */
+
+
+/* --- INICIO DE FUNÇÕES DA TABELA FECHAMENTO_CAIXA --- */
+
 //Função para lançamento de fechamentos de caixa
-function fecha_caixa($valor){
-    $sql="insert into fechamento_caixa values(NULL,'$valor', CURRENT_TIMESTAMP)";
+function cadastra_caixa($valor){
+    $sql="INSERT INTO fechamento_caixa VALUES(NULL,'$valor', CURRENT_TIMESTAMP)";
 
     return $sql;
 } 
+
+//Função para alterar fechamentos de caixa
+function altera_caixa($id_fechamento, $valor, $data){
+    $sql="UPDATE fechamento_caixa SET valor='$valor', data='$data' WHERE id_fechamento='$id_fechamento';";
+
+    return $sql;
+}
+
+//Função para excluir fechamentos de caixa
+function exclui_caixa($id_fechamento){
+    $sql="DELETE FROM fechamento_caixa WHERE id_fechamento = '$id_fechamento';";
+
+    return $sql;
+}
+
+/* --- FIM DE FUNÇÕES DA TABELA FECHAMENTO_CAIXA --- */
 ?>
