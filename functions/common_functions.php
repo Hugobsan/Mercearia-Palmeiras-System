@@ -32,13 +32,10 @@ function exclui_produto($id_produto){
 }
 
 //Função para exibir infomações básicas dos produtos
-function exibe_produto_min($id_produto){
+function exibe_produto($id_produto){
     $sql="SELECT nome, preco_venda, unidade_medida, quant_estoque FROM produto WHERE id_produto = '$id_produto'";
     return $sql;
 }
-
-//Função para exibir informações completas dos produtos
-
 /* --- FIM DAS FUNÇÕES DA TABELA PRODUTO --- */
 
 
@@ -116,6 +113,11 @@ function exclui_lanc_estoque($id_lancamento){
     return $sql;
 }
 
+//Função para recuperar os lançamentos de estoque
+function exibe_lanc($id_produto){
+    $sql="SELECT data_lancamento, quant_recebida, preco_custo_un FROM lancamento_estoque WHERE id_produto='$id_produto' ORDER BY data_lancamento DESC";
+    return $sql;
+}
 /* --- FIM DAS FUNÇÕES DA TABELA LANÇAMETO_ESTOQUE --- */
 
 
@@ -188,6 +190,37 @@ function exclui_cliente($id_cliente){
     DELETE FROM telefone WHERE id_cliente='$id_cliente'";
 
     return $sql;
+}
+
+//Função para recuperação de todos os clientes
+function exibe_clientes_all(){
+    $sql="SELECT id_cliente, nome FROM cliente WHERE 0;
+    SELECT id_caderneta, data_abertura FROM caderneta WHERE id_cliente = '' AND status_caderneta = 'aberta';
+    SELECT id_venda FROM venda WHERE id_caderneta = '';
+    SELECT id_produto, quant FROM venda_produto WHERE id_venda='';
+    SELECT preco_venda FROM produto WHERE id_produto = '';";
+    return $sql;
+}
+
+//Função para recuperar clientes com atraso
+function exibe_clientes_atrasos(){
+    $sql="SELECT id_cliente FROM caderneta WHERE status_caderneta='aberta' AND data_caderneta+30 days <= date(CURRENT_TIMESTAMP)';";
+    return $sql;
+}
+
+//Função para recuperar clientes compatíveis com o nome pesquisado
+function exibe_clinetes_src($pesquisa){
+    $sql="SELECT id_cliente, nome FROM cliente WHERE nome='%$pesquisa%';
+    SELECT id_caderneta, data_abertura FROM caderneta WHERE id_cliente = '' AND status_caderneta = 'aberta';
+    SELECT id_venda FROM venda WHERE id_caderneta = '';
+    SELECT id_produto, quant FROM venda_produto WHERE id_venda='';
+    SELECT preco_venda FROM produto WHERE id_produto = '';";
+    return $sql;
+}
+
+//Função para exibir informações do cliente
+function exibe_info_cliente($id_cliente){
+    $sql="";
 }
 
 /* --- FIM DE FUNÇÕES DA TABELA CLIENTE --- */
