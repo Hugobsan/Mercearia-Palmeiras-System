@@ -56,7 +56,7 @@ function cadastra_venda_drt($id_produto, $quant){
 function cadastra_venda_cad($id_produto, $quant, $id_caderneta){
     $sql="insert into venda values (null, '$id_caderneta', CURRENT_TIMESTAMP, '0');
     SET @id_venda = (select max(id_venda) from venda);
-    insert into venda_produto values(@id_venda,'$id_produto','$quant','0');
+    insert into venda_produto values(null, @id_venda,'$id_produto','$quant','0');
     update venda set finalizada=1 where finalizada=0;
     update produto set quant_estoque=quant_estoque-'$quant' where id_produto = '$id_produto';";
 
@@ -144,6 +144,22 @@ function exclui_caderneta($id_caderneta){
     return $sql;
 }
 
+//Função para exibir dados das cadernetas
+function exibe_cadernetas($id_cliente){
+    $sql="SELECT id_caderneta, data_abertura, status_caderneta FROM caderneta WHERE id_cliente='$id_cliente';";
+
+    return $sql;
+}
+
+//Função pra exibir caderneta específica
+function exibe_dados_caderneta($id_caderneta){
+    $sql="SELECT id_caderneta, data_abertura, status_caderneta FROM caderneta WHERE id_caderneta='$id_caderneta';
+    SELECT nome FROM cliente WHERE id_cliente=(SELECT id_cliente FROM caderneta WHERE id_caderneta='$id_caderneta');
+    ";
+
+    return $sql;
+}
+
 /* --- FIM DE FUNÇÕES DA TABELA CADERNETA --- */
 
 
@@ -220,7 +236,12 @@ function exibe_clinetes_src($pesquisa){
 
 //Função para exibir informações do cliente
 function exibe_info_cliente($id_cliente){
-    $sql="";
+    $sql="SELECT nome, cpf FROM cliente WHERE id_cliente = '$id_cliente';
+    SELECT rua, num, bairro, cidade FROM endereco WHERE id_cliente = '$id_cliente';
+    SELECT status_caderneta FROM caderneta WHERE id_caderneta = (SELECT max(id_caderneta) FROM caderneta) AND id_cliente = '$id_cliente';
+    ";
+
+    return $sql;
 }
 
 /* --- FIM DE FUNÇÕES DA TABELA CLIENTE --- */

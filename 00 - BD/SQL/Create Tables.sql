@@ -76,12 +76,13 @@ CREATE TABLE venda(
 
 DROP TABLE IF EXISTS venda_produto;
 CREATE TABLE venda_produto(
+    id_venda_produto int(10) NOT NULL AUTO_INCREMENT,
     id_venda int(10) NOT NULL,
     id_produto int(10) NOT NULL,
     quant decimal(12,3) NOT NULL DEFAULT 0,
     pago BOOLEAN NOT NULL DEFAULT 0, 
 
-    PRIMARY KEY (id_venda, id_produto),
+    PRIMARY KEY (id_venda_produto),
     FOREIGN KEY (id_venda) REFERENCES venda(id_venda),
     FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
 );
@@ -92,6 +93,7 @@ CREATE TABLE despesa(
     custo_un decimal(12,2) NOT NULL DEFAULT 0,
     descricao varchar(144) NULL,
     nome varchar(30) NULL,
+    data_despesa date NOT NULL,
     quant decimal(12,3) NOT NULL DEFAULT 0,
 
     PRIMARY KEY (id_despesa)
