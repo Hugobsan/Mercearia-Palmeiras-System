@@ -45,7 +45,7 @@ function exibe_produto($id_produto){
 function cadastra_venda_drt($id_produto, $quant){
     $sql="insert into venda values (null, null, CURRENT_TIMESTAMP, '0');
     SET @id_venda = (select max(id_venda) from venda);
-    insert into venda_produto values(@id_venda,'$id_produto','$quant','1');
+    insert into venda_produto values(null, @id_venda,'$id_produto','$quant','1');
     update venda set finalizada=1 where finalizada=0;
     update produto set quant_estoque=quant_estoque-'$quant' where id_produto = '$id_produto';";
 
@@ -113,11 +113,24 @@ function exclui_lanc_estoque($id_lancamento){
     return $sql;
 }
 
-//Função para recuperar os lançamentos de estoque
-function exibe_lanc($id_produto){
-    $sql="SELECT data_lancamento, quant_recebida, preco_custo_un FROM lancamento_estoque WHERE id_produto='$id_produto' ORDER BY data_lancamento DESC";
+//Função para exibir todas as despesas
+function exibe_lancamentos_all(){
+    $sql = "SELECT nome as nome_despesa, descricao, quant, custo_un FROM despesa WHERE 0 ORDER BY id_despesa DESC";
     return $sql;
 }
+
+//Função para exibir lançamentos de estoque por dia específico
+function exibe_lancamentos_data($data){
+    $sql = "SELECT p.nome as l.nome_produto, l.quant_recebida, l.preco_custo_un, l.data_lancamento FROM lancamento_estoque as l, produto as p WHERE l.id_produto=p.id_produto AND data_lancamento = '$data' ORDER BY l.id_lancamento DESC";
+    return $sql;
+}
+
+//Função para exibir lançamentos de estoque a partir de um período
+function exibe_lancamentos_periodo($inicio, $fim){
+    $sql = "SELECT p.nome as l.nome_produto, l.quant_recebida, l.preco_custo_un, l.data_lancamento FROM lancamento_estoque as l, produto as p WHERE l.id_produto=p.id_produto AND data_lancamento BETWEEN '$inicio' AND '$fim' ORDER BY l.id_lancamento DESC";
+    return $sql;
+}
+
 /* --- FIM DAS FUNÇÕES DA TABELA LANÇAMETO_ESTOQUE --- */
 
 
@@ -125,7 +138,7 @@ function exibe_lanc($id_produto){
 
 //Função para criar uma nova caderneta.
 function cria_caderneta($id_cliente){
-    $sql="insert into caderneta values(NULL, '$id_cliente', date(CURRENT_TIMESTAMP), NULL)";
+    $sql="insert into caderneta values(NULL, '$id_cliente', date(CURRENT_TIMESTAMP), 'aberta')";
     
     return $sql;
 }
@@ -153,10 +166,14 @@ function exibe_cadernetas($id_cliente){
 
 //Função pra exibir caderneta específica
 function exibe_dados_caderneta($id_caderneta){
-    $sql="SELECT id_caderneta, data_abertura, status_caderneta FROM caderneta WHERE id_caderneta='$id_caderneta';
-    SELECT nome FROM cliente WHERE id_cliente=(SELECT id_cliente FROM caderneta WHERE id_caderneta='$id_caderneta');
-    ";
+    $sql="SELECT cli.nome as nome_cliente, cad.id_caderneta, cad.data_abertura, cad.status_caderneta FROM caderneta as cad, cliente as cli WHERE cli.id_cliente=(SELECT id_cliente FROM caderneta WHERE id_caderneta='$id_caderneta') AND id_caderneta='$id_caderneta';";
 
+    return $sql;
+}
+
+//função para exibir total da caderneta informada
+function total_caderneta($id_caderneta){
+    $sql="SELECT SUM(p.preco_venda*vp.quant) AS total_venda FROM produto as p, venda_produto as vp, venda as v, caderneta as c WHERE p.id_produto=vp.id_produto AND vp.id_venda = v.id_venda AND v.id_caderneta = '$id_caderneta';";
     return $sql;
 }
 
@@ -168,7 +185,7 @@ function exibe_dados_caderneta($id_caderneta){
 //Função para cadastro de novo cliente.
 function cadastra_cliente($cpf, $nome, $telefone, $num, $cidade, $rua, $bairro){
     $sql="insert into cliente values(NULL,'$cpf','$nome');
-    @id_cliente=(select max(id_cliente) from cliente);
+    SET @id_cliente=(select max(id_cliente) from cliente);
     insert into telefone values(@id_cliente, '$telefone');
     insert into endereco values(@id_cliente, '$num', '$rua', '$bairro', '$cidade');
     ";
@@ -210,11 +227,7 @@ function exclui_cliente($id_cliente){
 
 //Função para recuperação de todos os clientes
 function exibe_clientes_all(){
-    $sql="SELECT id_cliente, nome FROM cliente WHERE 0;
-    SELECT id_caderneta, data_abertura FROM caderneta WHERE id_cliente = '' AND status_caderneta = 'aberta';
-    SELECT id_venda FROM venda WHERE id_caderneta = '';
-    SELECT id_produto, quant FROM venda_produto WHERE id_venda='';
-    SELECT preco_venda FROM produto WHERE id_produto = '';";
+    $sql="SELECT cli.id_cliente, cli.nome as nome_cliente, cad.id_caderneta, cad.data_abertura, cad.status_caderneta, FROM cliente as cli, caderneta as cad WHERE cli.id_cliente=cad.id_cliente order by cli.nome ASC;";
     return $sql;
 }
 
@@ -225,21 +238,20 @@ function exibe_clientes_atrasos(){
 }
 
 //Função para recuperar clientes compatíveis com o nome pesquisado
-function exibe_clinetes_src($pesquisa){
-    $sql="SELECT id_cliente, nome FROM cliente WHERE nome='%$pesquisa%';
-    SELECT id_caderneta, data_abertura FROM caderneta WHERE id_cliente = '' AND status_caderneta = 'aberta';
-    SELECT id_venda FROM venda WHERE id_caderneta = '';
-    SELECT id_produto, quant FROM venda_produto WHERE id_venda='';
-    SELECT preco_venda FROM produto WHERE id_produto = '';";
+function exibe_clinetes_src($id_cliente){
+    $sql="SELECT cli.id_cliente, cli.nome as nome_cliente, cad.id_caderneta, cad.data_abertura, cad.status_caderneta, FROM cliente as cli, caderneta as cad WHERE cli.id_cliente=cad.id_cliente AND cli.id_cliente='$id_cliente' order by cli.nome ASC;";
+    return $sql;
+}
+
+//Função para exibir nome dos Clientes na pesquisa
+function exibe_nome_cliente(){
+    $sql="SELECT nome, id_cliente FROM cliente ORDER BY nome ASC";
     return $sql;
 }
 
 //Função para exibir informações do cliente
 function exibe_info_cliente($id_cliente){
-    $sql="SELECT nome, cpf FROM cliente WHERE id_cliente = '$id_cliente';
-    SELECT rua, num, bairro, cidade FROM endereco WHERE id_cliente = '$id_cliente';
-    SELECT status_caderneta FROM caderneta WHERE id_caderneta = (SELECT max(id_caderneta) FROM caderneta) AND id_cliente = '$id_cliente';
-    ";
+    $sql="SELECT cli.nome as nome_cliente, cli.cpf, e.rua, e.num, e.bairro, e.cidade, t.telefone, cad.status_caderneta, cad.data_abertura  FROM cliente as cli, endereco as e, telefone as t, caderneta as cad WHERE cli.id_cliente = e.id_cliente AND cli.id_cliente=t.id_cliente AND cli.id_cliente=cad.id_cliente AND cad.id_caderneta=(SELECT max(id_caderneta) FROM caderneta) AND cli.id_cliente = '$id_cliente';";
 
     return $sql;
 }
@@ -251,7 +263,7 @@ function exibe_info_cliente($id_cliente){
 
 //Função para lançamento de despesas
 function cadastra_despesa($custo_un, $descricao, $nome, $quant){
-    $sql="insert into despesa values(NULL, '$custo_un', '$descricao', '$nome', '$quant');";
+    $sql="insert into despesa values(NULL, '$custo_un', '$descricao', '$nome', date(CURRENT_TIMESTAMP),'$quant');";
 
     return $sql;
 }
@@ -267,6 +279,24 @@ function altera_despesa($id_despesa, $custo_un, $descricao, $nome, $quant){
 function exclui_despesa($id_despesa){
     $sql="DELETE FROM despesa WHERE id_despesa='$id_despesa';";
 
+    return $sql;
+}
+
+//Função para exibir todos os lançamentos de estoque
+function exibe_despesas_all(){
+    $sql = "SELECT p.nome as l.nome_produto, l.quant_recebida, l.preco_custo_un, l.data_lancamento FROM lancamento_estoque as l, produto as p WHERE l.id_produto=p.id_produto ORDER BY l.id_lancamento DESC";
+    return $sql;
+}
+
+//Função para exibir despesa por dia específico
+function exibe_despesa_data($data){
+    $sql = "SELECT nome as nome_despesa, descricao, quant, custo_un FROM despesa WHERE data_despesa='$data' ORDER BY id_despesa DESC";
+    return $sql;
+}
+
+//Função para exibir despesas a partir de um período
+function exibe_despesa_periodo($inicio, $fim){
+    $sql = "SELECT nome as nome_despesa, descricao, quant, custo_un FROM despesa WHERE data_despesa BETWEEN '$inicio' AND '$fim' ORDER BY id_despesa DESC";
     return $sql;
 }
 
@@ -296,5 +326,109 @@ function exclui_caixa($id_fechamento){
     return $sql;
 }
 
+//Função para exibir todos os fechamentos de caixa
+function exibe_caixa(){
+    $sql="SELECT valor, data WHERE 0 order by data DESC;";
+    return $sql;
+}
+
+//Função para exibir fechamento de caixa em dia específico
+function exibe_caixa_dia($data){
+    $sql="SELECT valor, data WHERE data='$data';";
+    return $sql;
+}
+
+//Função para exibir fechamento de caixa em período
+function exibe_caixa_periodo($inicio, $fim){
+    $sql="SELECT valor, data WHERE data BETWEEN '$inicio' and '$fim' ORDER BY data DESC;";
+    return $sql;
+}
+
 /* --- FIM DE FUNÇÕES DA TABELA FECHAMENTO_CAIXA --- */
+
+/* --- INICIO DE FUNÇÕES DE PESQUISA DE LUCROS --- */
+
+//Função para pesquisar todos os lucros
+function exibe_lucros(){
+    $sql="SELECT SUM(p.preco_venda*v.quant)-SUM(l.preco_custo_un*l.quant_recebida) AS lucro_total FROM produto as p, venda_produto as v, lancamento_estoque as l WHERE p.id_produto=v.id_produto AND p.id_produto=l.id_produto";
+    return $sql;
+}
+
+//Função para pesquisar os lucros a partir de uma data
+function exibe_lucros_data($data){
+    $sql="SELECT SUM(p.preco_venda*v.quant)-SUM(l.preco_custo_un*l.quant_recebida) AS lucro_total FROM produto as p, venda_produto as v, lancamento_estoque as l, venda as ven  WHERE p.id_produto=v.id_produto AND p.id_produto=l.id_produto AND ven.id_venda=v.id_venda AND date(ven.data)='$data' AND l.data_lancamento='$data';";
+    return $sql;
+}
+
+//Função para pesquisar os lucros a partir de um período
+function exibe_lucros_periodo($inicio, $fim){
+    $sql="SELECT SUM(p.preco_venda*v.quant)-SUM(l.preco_custo_un*l.quant_recebida) AS lucro_total FROM produto as p, venda_produto as v, lancamento_estoque as l, venda as ven  WHERE p.id_produto=v.id_produto AND p.id_produto=l.id_produto AND ven.id_venda=v.id_venda AND date(ven.data) BETWEEN '$inicio' AND '$fim' AND l.data_lancamento BETWEEN '$inicio' and '$fim';";
+    return $sql;
+}
+
+/* --- FIM DE FUNÇÕES DE PESQUISA DE LUCROS --- */
+
+/* --- INICIO DE FUNÇÕES DE PESQUISA DE VENDAS --- */
+
+//Função para mostrar vendas não finalizadas
+
+//Função para mostrar todas as vendas
+function exibir_vendas_all(){
+    $sql="SELECT p.nome as nome_produto, v.data as data_venda, vp.quant, vp.quant*p.preco_venda as Valor, cli.nome as nome_cliente, SUM(vp.quant*p.preco_venda) AS total_pesquisa FROM produto as p, cliente as cli, venda_produto as vp, venda as v WHERE cli.id_cliente = (SELECT id_cliente FROM caderneta WHERE id_caderneta= (SELECT id_caderneta FROM venda WHERE id_venda=(SELECT id_venda FROM venda WHERE id_venda = (SELECT id_venda FROM venda_produto WHERE id_produto=(SELECT id_produto FROM produto WHERE 0))))) ORDER BY vp.id_venda_produto;";
+    return $sql;
+}
+//Função para mostrar todas as vendas fiado abertas
+function name(){
+    $sql="";
+    return $sql;
+}
+
+//Função para pesquisa por nome do produto
+function name(){
+    $sql="";
+    return $sql;
+}
+
+//Função para pesquisa por nome do produto para fiado abertas
+function name(){
+    $sql="";
+    return $sql;
+}
+
+//Função para pesquisa por cliente
+function name(){
+    $sql="";
+    return $sql;
+}
+
+//Função para pesquisa por cliente para vendas fiado abertas
+function name(){
+    $sql="";
+    return $sql;
+}
+
+//Função para pesquisa por data
+function name(){
+    $sql="";
+    return $sql;
+}
+
+//Função para pesquisa por data para vendas fiado abertas
+function name(){
+    $sql="";
+    return $sql;
+}
+
+//Função para pesquisa por período
+function name(){
+    $sql="";
+    return $sql;
+}
+
+//Função para pesquisa por período para vendas fiado abertas
+function name(){
+    $sql="";
+    return $sql;
+}
+
 ?>
