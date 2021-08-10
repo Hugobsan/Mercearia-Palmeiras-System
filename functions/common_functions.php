@@ -49,9 +49,9 @@ function exclui_produto($id_produto){
 }
 
 //Função para exibir infomações básicas de um produto
-function exibe_produto($id_produto){
+function exibe_produto($nome_produto){
     require_once("../00 - BD/bd_conexao.php");
-    $sql="SELECT nome, preco_venda, unidade_medida, quant_estoque FROM produto WHERE id_produto = '$id_produto'";
+    $sql="SELECT id_produto, nome, preco_venda, unidade_medida, quant_estoque FROM produto WHERE nome LIKE '%$nome_produto%' ORDER BY nome ASC";
     $resultado=$con->query($sql);
     fecharConexao($con);
     return $resultado;
@@ -60,7 +60,7 @@ function exibe_produto($id_produto){
 //Função para exibir informações básicas de todos os produtos
 function exibe_produto_all(){
     require_once("../00 - BD/bd_conexao.php");
-    $sql="SELECT nome, preco_venda, unidade_medida, quant_estoque FROM produto ORDER BY nome ASC";
+    $sql="SELECT id_produto, nome, preco_venda, unidade_medida, quant_estoque FROM produto ORDER BY nome ASC";
     $resultado=$con->query($sql);
     fecharConexao($con);
     return $resultado;

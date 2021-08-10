@@ -1,0 +1,70 @@
+body{
+    font-family:"Trebuchet MS", Helvetica, sans-serif;
+    background-image: linear-gradient(180deg, #111113, #303033, #111113) ;
+}
+.meu-menu{
+    padding: 20px;
+    margin-bottom: 30px;
+    background-image: linear-gradient(90deg, #090933, #140c80) ;
+}
+.titulo-menu{
+    color:#eeeded;
+}
+.subtitulo-menu{
+    color:#eeeded;
+    margin-top: 10px;
+}
+.icon-menu{
+    height: 30px;
+}
+.itens-menu{
+    padding:20px 0px;
+}
+.menu-item{
+    text-align: center;
+    border:1px solid #131314;
+    background-color: #bdbdbd;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    display: inline-block;
+    font-weight: 700;
+    font-size: 12px;
+}
+.menu-item:hover{
+    color:#303033;
+    background-color: #d3cfcf;
+}
+.itens-menu a{
+    color: #131314 !important;
+    text-decoration: none !important;
+}
+.form-produtos{
+    padding: 10px;
+    margin: 10px auto;
+    margin-bottom: 40px;
+    background-color: #eeeded;
+}
+.titulo-produtos{
+    margin: 10px;
+}
+.exibir-produtos{
+    background-color: #eeeded;
+    padding: 10px;
+    margin: 10px auto;
+    margin-bottom: 40px;
+}
+.mb-20{
+    margin-bottom: 20px;
+}
+.img-button{
+    height: 25px;
+}
+.scrollable{
+    height: 500px;
+    display: inline-block;
+    width:100%;
+    overflow: auto;
+}
+label{
+    font-weight: bold;
+}
