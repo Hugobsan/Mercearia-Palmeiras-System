@@ -1,11 +1,12 @@
 DROP TABLE IF EXISTS produto;
 CREATE TABLE produto(
     id_produto int(10) NOT NULL AUTO_INCREMENT,
-    cod_barras varchar(30) NULL UNIQUE,
-    nome varchar(80) NOT NULL UNIQUE,
+    cod_barras varchar(30) NULL,
+    nome varchar(80) NOT NULL,
     preco_venda decimal(12,2) NOT NULL DEFAULT 0,
     unidade_medida varchar(2) NOT NULL DEFAULT 'un',
     quant_estoque decimal(12,3) NULL DEFAULT 0,
+    visivel BOOLEAN not null DEFAULT 1,
     
     PRIMARY KEY (id_produto)
 );
@@ -79,6 +80,8 @@ CREATE TABLE venda_produto(
     id_venda_produto int(10) NOT NULL AUTO_INCREMENT,
     id_venda int(10) NOT NULL,
     id_produto int(10) NOT NULL,
+    nome_produto varchar(80) NOT NULL,
+    unidade_medida varchar(2) NOT NULL,
     quant decimal(12,3) NOT NULL DEFAULT 0,
     pago BOOLEAN NOT NULL DEFAULT 0,
     valor_pago decimal(12,2) NOT NULL DEFAULT 0,

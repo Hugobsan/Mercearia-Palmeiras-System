@@ -15,7 +15,7 @@
         $preco_custo=str_replace(',','.', $preco_custo);
     }
     if(empty($id_produto) || empty($quant_recebida) || empty($preco_custo)){
-        header("Location: ../front/lancamento_estoque/index.php?message=1");
+        header("Location: ../front/lancamento_estoque.php?message=1");
     }
     $sql=cadastra_lanc_estoque($id_produto, $quant_recebida, $preco_custo);
     if($sql == 0){

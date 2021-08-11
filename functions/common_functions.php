@@ -4,8 +4,15 @@
 function cadastra_produto_cod($cod_barras, $nome, $preco_venda, $unidade_medida, $quant_estoque){
     $error_detection = 0;
     require_once("../00 - BD/bd_conexao.php");
-    $sql="INSERT INTO produto values (null, '$cod_barras', '$nome', '$preco_venda', '$unidade_medida', '$quant_estoque');";
-    if($con->query($sql)==FALSE){
+    $sql="SELECT nome FROM produto WHERE cod_barras='$cod_barras' AND nome='$nome' AND visivel = 1 ";
+    $consulta=$con->query($sql);
+    if(mysqli_num_rows($consulta)==0){
+        $sql="INSERT INTO produto values (null, '$cod_barras', '$nome', '$preco_venda', '$unidade_medida', '$quant_estoque', 1);";
+        if($con->query($sql)==FALSE){
+            $error_detection++;
+        }
+    }
+    else{
         $error_detection++;
     }
     fecharConexao($con);
@@ -16,8 +23,15 @@ function cadastra_produto_cod($cod_barras, $nome, $preco_venda, $unidade_medida,
 function cadastra_produto_spl($nome, $preco_venda, $unidade_medida, $quant_estoque){
     $error_detection = 0;
     require_once("../00 - BD/bd_conexao.php");
-    $sql="INSERT INTO produto values (null, null, '$nome', '$preco_venda', '$unidade_medida', '$quant_estoque');";
-    if($con->query($sql)==FALSE){
+    $sql="SELECT nome FROM produto WHERE nome='$nome' AND visivel=1";
+    $consulta=$con->query($sql);
+    if(mysqli_num_rows($consulta)==0){
+        $sql="INSERT INTO produto values (null, null, '$nome', '$preco_venda', '$unidade_medida', '$quant_estoque', 1);";
+        if($con->query($sql)==FALSE){
+            $error_detection++;
+        }
+    }
+    else{
         $error_detection++;
     }
     fecharConexao($con);
@@ -40,7 +54,7 @@ function altera_produto($id_produto, $nome, $preco_venda, $unidade_medida, $quan
 function exclui_produto($id_produto){
     $error_detection = 0;
     require_once("../00 - BD/bd_conexao.php");
-    $sql="DELETE FROM produto WHERE id_produto = '$id_produto';";
+    $sql="UPDATE produto SET visivel = 0 WHERE id_produto = '$id_produto';";
     if($con->query($sql)==FALSE){
         $error_detection++;
     }
@@ -51,7 +65,7 @@ function exclui_produto($id_produto){
 //Função para exibir infomações básicas de um produto
 function exibe_produto($nome_produto){
     require_once("../00 - BD/bd_conexao.php");
-    $sql="SELECT id_produto, nome, preco_venda, unidade_medida, quant_estoque FROM produto WHERE nome LIKE '%$nome_produto%' ORDER BY nome ASC";
+    $sql="SELECT id_produto, nome, preco_venda, unidade_medida, quant_estoque FROM produto WHERE nome LIKE '%$nome_produto%' AND visivel = 1 ORDER BY nome ASC";
     $resultado=$con->query($sql);
     fecharConexao($con);
     return $resultado;
@@ -60,7 +74,7 @@ function exibe_produto($nome_produto){
 //Função para exibir informações básicas de todos os produtos
 function exibe_produto_all(){
     require_once("../00 - BD/bd_conexao.php");
-    $sql="SELECT id_produto, nome, preco_venda, unidade_medida, quant_estoque FROM produto ORDER BY nome ASC";
+    $sql="SELECT id_produto, nome, preco_venda, unidade_medida, quant_estoque FROM produto WHERE visivel = 1 ORDER BY nome ASC";
     $resultado=$con->query($sql);
     fecharConexao($con);
     return $resultado;
@@ -69,7 +83,7 @@ function exibe_produto_all(){
 //Função para exibir todas as informações de um produto específico
 function exibe_produto_completo($id_produto){
     require_once("../00 - BD/bd_conexao.php");
-    $sql="SELECT cod_barras, nome, preco_venda, unidade_medida, quant_estoque FROM produto WHERE id_produto = '$id_produto'";
+    $sql="SELECT nome, preco_venda, unidade_medida, quant_estoque FROM produto WHERE id_produto = '$id_produto'";
     $resultado=$con->query($sql);
     fecharConexao($con);
     return $resultado;
@@ -84,7 +98,7 @@ function exibe_produto_completo($id_produto){
 function cadastra_venda_drt($id_produto, $quant){
     $error_detection = 0;
     require_once("../00 - BD/bd_conexao.php");
-    $sql="insert into venda_produto values(null, (select max(id_venda) from venda),'$id_produto','$quant','1', $quant*(SELECT preco_venda FROM produto WHERE id_produto='$id_produto'));";
+    $sql="insert into venda_produto values(null, (select max(id_venda) from venda),'$id_produto',(SELECT nome_produto FROM produto WHERE id_produto = '$id_produto'), (SELECT unidade_medida FROM produto WHERE id_produto='$id_produto'), '$quant','1', $quant*(SELECT preco_venda FROM produto WHERE id_produto='$id_produto'));";
     if($con->query($sql)==FALSE){
         $error_detection++;
     }
@@ -114,7 +128,7 @@ function finalizar_venda(){
 function cadastra_venda_cad($id_produto, $quant, $id_caderneta){
     $error_detection = 0;
     require_once("../00 - BD/bd_conexao.php");
-    $sql="insert into venda_produto values(null, (select max(id_venda) from venda),'$id_produto','$quant','0', $quant*(SELECT preco_venda FROM produto WHERE id_produto='$id_produto'));";
+    $sql="insert into venda_produto values(null, (select max(id_venda) from venda),'$id_produto', (SELECT nome_produto FROM produto WHERE id_produto = '$id_produto'), (SELECT unidade_medida FROM produto WHERE id_produto='$id_produto'), '$quant','0', $quant*(SELECT preco_venda FROM produto WHERE id_produto='$id_produto'));";
     if($con->query($sql)==FALSE){
         $error_detection++;
     }
@@ -158,7 +172,7 @@ function exclui_venda($id_venda_produto){
 function cadastra_lanc_estoque($id_produto, $quant_recebida, $preco_custo_un){
     $error_detection = 0;
     require_once("../00 - BD/bd_conexao.php");
-    $sql="insert into lancamento_estoque values(NULL, '$id_produto', '$quant_recebida', '$preco_custo_un', date(CURRENT_TIMESTAMP));";
+    $sql="insert into lancamento_estoque values(NULL, '$id_produto', (select nome from produto where id_produto='$id_produto'),'$quant_recebida', '$preco_custo_un', date(CURRENT_TIMESTAMP));";
     if($con->query($sql)==FALSE){
         $error_detection++;
     };
@@ -205,7 +219,7 @@ function exclui_lanc_estoque($id_lancamento){
 //Função para exibir todas as despesas
 function exibe_lancamentos_all(){
     require_once("../00 - BD/bd_conexao.php");
-    $sql = "SELECT nome as nome_despesa, descricao, quant, custo_un FROM despesa WHERE 0 ORDER BY id_despesa DESC";
+    $sql = "SELECT id_lancamento, nome_produto, quant_recebida, preco_custo_un, data_lancamento FROM lancamento_estoque ORDER BY id_lancamento DESC";
     $con->query($sql);
     $resultado=$con->query($sql);
     fecharConexao($con);
@@ -215,7 +229,7 @@ function exibe_lancamentos_all(){
 //Função para exibir lançamentos de estoque por dia específico
 function exibe_lancamentos_data($data){
     require_once("../00 - BD/bd_conexao.php");
-    $sql = "SELECT p.nome as l.nome_produto, l.quant_recebida, l.preco_custo_un, l.data_lancamento FROM lancamento_estoque as l, produto as p WHERE l.id_produto=p.id_produto AND data_lancamento = '$data' ORDER BY l.id_lancamento DESC";
+    $sql = "SELECT id_lancamento, nome_produto, quant_recebida, preco_custo_un, data_lancamento FROM lancamento_estoque WHERE data_lancamento = '$data' ORDER BY id_lancamento DESC";
     $con->query($sql);
     $resultado=$con->query($sql);
     fecharConexao($con);
@@ -225,7 +239,7 @@ function exibe_lancamentos_data($data){
 //Função para exibir lançamentos de estoque a partir de um período
 function exibe_lancamentos_periodo($inicio, $fim){
     require_once("../00 - BD/bd_conexao.php");
-    $sql = "SELECT p.nome as l.nome_produto, l.quant_recebida, l.preco_custo_un, l.data_lancamento FROM lancamento_estoque as l, produto as p WHERE l.id_produto=p.id_produto AND data_lancamento BETWEEN '$inicio' AND '$fim' ORDER BY l.id_lancamento DESC";
+    $sql = "SELECT id_lancamento, nome_produto, quant_recebida, preco_custo_un, data_lancamento FROM lancamento_estoque WHERE data_lancamento BETWEEN '$inicio' AND '$fim' ORDER BY id_lancamento DESC";
     $con->query($sql);
     $resultado=$con->query($sql);
     fecharConexao($con);
