@@ -3,7 +3,7 @@
         <div class="col-4 titulo-menu"><h1>Mercearia Palmeiras</h1></div>
         <div class="col-8 itens-menu">
             <a href="vender.php" class=""><span class="menu-item"><img class="icon-menu"src="../imgs/vender.png"><br>Vender</span></a>
-            <a href="clientes.php" class="link"><span class="menu-item"><img class="icon-menu"src="../imgs/cliente.png"><br>Clientes</span></a>
+            <a href="exibir_clientes.php" class="link"><span class="menu-item"><img class="icon-menu"src="../imgs/cliente.png"><br>Clientes</span></a>
             <a href="exibir_produtos.php" class="link"><span class="menu-item"><img class="icon-menu"src="../imgs/produtos.png"><br>Meus Produtos</span></a>
             <a href="lancamento_estoque.php" class="link"><span class="menu-item"><img class="icon-menu"src="../imgs/lanca-estoque.png"><br>Lançar Estoque</span></a>
             <a href="lancamento_despesas.php" class="link"><span class="menu-item"><img class="icon-menu"src="../imgs/despesas.png"><br>Lançar Despesas</span></a>

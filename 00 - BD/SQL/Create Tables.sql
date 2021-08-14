@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS lancamento_estoque;
 CREATE TABLE lancamento_estoque(
     id_lancamento int(10) NOT NULL AUTO_INCREMENT,
     id_produto int(10) NOT NULL,
+    nome_produto varchar(80) NOT NULL,
     quant_recebida decimal(12,3) NOT NULL,
     preco_custo_un decimal(12,2) NOT NULL,
     data_lancamento DATE NOT NULL,

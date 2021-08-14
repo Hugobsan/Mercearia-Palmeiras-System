@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="pt-br">
   <head>
-    <title>Cadastro de Produto</title>
+    <title>Cadastro de Clientes</title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -52,22 +52,29 @@
     }
     else{
       ?>
-      <h1 class="text-center text-white">Cadastro de Produto</h1>
-      <form method="POST" class="col-8 form-produtos border border-warning rounded" action="../back/cadastra_produtos.php">
-          <label for="nome">Nome do Produto*</label><br>
-          <input type="text" class="form-control" name="nome_produto" id="nome" autocomplete="off" required><br>
-          <label for="cod_barras">Código de Barras</label><br>
-          <input type="number" class="form-control" name="cod_barras" id="cod_barras" autocomplete="off"><br>
-          <label for="preco_venda">Preço de Venda*</label><br>
-          <input type="number"  step="any" class="form-control" name="preco_venda" id="preco_venda" autocomplete="off" required><br>
-          <label for="un">Unidade de Medida*</label><br>
-          <select name="un_medida" class="col-5" id="un" required>
-            <option value="un" selected>Unidade</option>
-            <option value="kg">Peso</option>
-          </select>
+      <h1 class="text-center text-white">Cadastro de Clientes</h1>
+      <form method="POST" class="col-8 form-produtos border border-warning rounded" action="../back/cadastra_clientes.php">
+        <fieldset>
+        <legend>Informações do Cliente</legend>
+            <label for="nome">Nome do Cliente*</label><br>
+            <input type="text" class="form-control" name="nome_cliente" id="nome" autocomplete="off" required><br>
+            <label for="cpf">CPF ou CNPJ</label><br>
+            <input type="text" class="form-control" name="cpf" id="cpf" autocomplete="off"><br>
+            <label for="telefone">Telefone</label><br>
+            <input type="text" class="form-control" name="telefone" id="telefone" autocomplete="off"><br>
+        </fieldset>
+        <fieldset>
+            <legend>Informações de Endereço do Cliente</legend>
+        </fieldset>
+            <label for="rua">Rua</label><br>
+            <input type="text" class="form-control" name="rua" id="rua" autocomplete="off"><br>
+            <label for="num">Número</label><br>
+            <input type="number" class="form-control" name="numero" class="col-5" id="num"  autocomplete="off"><br>
+            <label for="bairro">Bairro</label><br>
+            <input type="text" class="form-control" name="bairro" id="bairro" autocomplete="off"><br>
+            <label for="cidade">Cidade</label><br>
+            <input type="text" class="form-control" name="cidade" id="cidade" autocomplete="off"><br>
           <br><br>
-          <label for="quant">Quantidade em Estoque</label><br>
-          <input type="number" step="any" class="form-control" name="quant_estoque" id="quant" autocomplete="off"><br>
           <button class="btn btn-primary form-control" type="submit" name="btn_enviar"><b>Cadastrar<b></button>
       </form>
       <?php
@@ -86,7 +93,7 @@
 if(isset($_GET['message'])){
     switch ($_GET['message']){
         case 1:
-            echo '<script> alert("Preencha todos os campos obrigatórios antes de enviar o formulário") </script>';
+            echo '<script> alert("") </script>';
             break;
     }
 }

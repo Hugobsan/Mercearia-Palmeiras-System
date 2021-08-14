@@ -67,7 +67,9 @@ label{
 .form-lancamentos input, .form-lancamentos button, .form-lancamentos h4{
     margin-bottom: 15px;
 }
-
+tr.resultado:hover{
+    background-color: #bdbdbd;
+}
 .info-produto{
     background-color: #eeeded;
     padding:15px;

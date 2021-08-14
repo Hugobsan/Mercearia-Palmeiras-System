@@ -82,11 +82,8 @@ function exibe_produto_all(){
 
 //Função para exibir todas as informações de um produto específico
 function exibe_produto_completo($id_produto){
-    require_once("../00 - BD/bd_conexao.php");
     $sql="SELECT nome, preco_venda, unidade_medida, quant_estoque FROM produto WHERE id_produto = '$id_produto'";
-    $resultado=$con->query($sql);
-    fecharConexao($con);
-    return $resultado;
+    return $sql;
 }
 
 /* --- FIM DAS FUNÇÕES DA TABELA PRODUTO --- */
@@ -175,7 +172,7 @@ function cadastra_lanc_estoque($id_produto, $quant_recebida, $preco_custo_un){
     $sql="insert into lancamento_estoque values(NULL, '$id_produto', (select nome from produto where id_produto='$id_produto'),'$quant_recebida', '$preco_custo_un', date(CURRENT_TIMESTAMP));";
     if($con->query($sql)==FALSE){
         $error_detection++;
-    };
+    }
     $sql="UPDATE produto SET quant_estoque=quant_estoque + '$quant_recebida' WHERE id_produto='$id_produto';";
     if($con->query($sql)==FALSE){
         $error_detection++;
@@ -188,14 +185,14 @@ function cadastra_lanc_estoque($id_produto, $quant_recebida, $preco_custo_un){
 function altera_lanc_estoque($id_lancamento, $quant_recebida, $preco_custo_un, $data_lancamento){
     $error_detection = 0;
     require_once("../00 - BD/bd_conexao.php");
-    $sql="UPDATE lancamento_estoque SET quant_recebida='$quant_recebida', preco_custo_un='$preco_custo_un', data_lancamento='$data_lancamento' WHERE id_lancamento='$id_lancamento';";
-    if($con->query($sql)==FALSE){
-        $error_detection++;
-    };
     $sql="UPDATE produto SET quant_estoque=quant_estoque + ('$quant_recebida'-(SELECT quant_recebida FROM lancamento_estoque WHERE id_lancamento='$id_lancamento')) WHERE id_produto = (SELECT id_produto FROM lancamento_estoque WHERE id_lancamento = '$id_lancamento');";
     if($con->query($sql)==FALSE){
         $error_detection++;
-    };
+    }
+    $sql="UPDATE lancamento_estoque SET quant_recebida='$quant_recebida', preco_custo_un='$preco_custo_un', data_lancamento='$data_lancamento' WHERE id_lancamento='$id_lancamento';";
+    if($con->query($sql)==FALSE){
+        $error_detection++;
+    }
     fecharConexao($con);
     return $error_detection;
 }
@@ -204,46 +201,60 @@ function altera_lanc_estoque($id_lancamento, $quant_recebida, $preco_custo_un, $
 function exclui_lanc_estoque($id_lancamento){
     $error_detection = 0;
     require_once("../00 - BD/bd_conexao.php");
-    $sql="DELETE FROM lancamento_estoque WHERE id_lancamento='$id_lancamento';";
-    if($con->query($sql)==FALSE){
-        $error_detection++;
-    };
     $sql="UPDATE produto SET quant_estoque=quant_estoque-(SELECT quant_recebida FROM lancamento_estoque WHERE id_lancamento='$id_lancamento') WHERE id_produto = (SELECT id_produto FROM lancamento_estoque WHERE id_lancamento='$id_lancamento');";
     if($con->query($sql)==FALSE){
         $error_detection++;
-    };
+    }
+    $sql="DELETE FROM lancamento_estoque WHERE id_lancamento='$id_lancamento';";
+    if($con->query($sql)==FALSE){
+        $error_detection++;
+    }
     fecharConexao($con);
     return $error_detection;
 }
-
-//Função para exibir todas as despesas
-function exibe_lancamentos_all(){
+//Função que exibe informações do lançamento de estoque a partir do ID
+function get_lancamento_by_id($id_lancamento){
     require_once("../00 - BD/bd_conexao.php");
-    $sql = "SELECT id_lancamento, nome_produto, quant_recebida, preco_custo_un, data_lancamento FROM lancamento_estoque ORDER BY id_lancamento DESC";
-    $con->query($sql);
+    $sql="SELECT id_produto, nome_produto, quant_recebida, preco_custo_un, data_lancamento FROM lancamento_estoque WHERE id_lancamento='$id_lancamento'";
     $resultado=$con->query($sql);
     fecharConexao($con);
     return $resultado;
+}
+
+//Função para exibir todos os lançamentos de estoque
+function exibe_lancamentos_all(){
+    $sql = "SELECT id_lancamento, nome_produto, quant_recebida, preco_custo_un, data_lancamento FROM lancamento_estoque ORDER BY id_lancamento DESC";
+    return $sql;
 }
 
 //Função para exibir lançamentos de estoque por dia específico
 function exibe_lancamentos_data($data){
-    require_once("../00 - BD/bd_conexao.php");
     $sql = "SELECT id_lancamento, nome_produto, quant_recebida, preco_custo_un, data_lancamento FROM lancamento_estoque WHERE data_lancamento = '$data' ORDER BY id_lancamento DESC";
-    $con->query($sql);
-    $resultado=$con->query($sql);
-    fecharConexao($con);
-    return $resultado;
+    return $sql;
 }
 
 //Função para exibir lançamentos de estoque a partir de um período
 function exibe_lancamentos_periodo($inicio, $fim){
-    require_once("../00 - BD/bd_conexao.php");
     $sql = "SELECT id_lancamento, nome_produto, quant_recebida, preco_custo_un, data_lancamento FROM lancamento_estoque WHERE data_lancamento BETWEEN '$inicio' AND '$fim' ORDER BY id_lancamento DESC";
-    $con->query($sql);
-    $resultado=$con->query($sql);
-    fecharConexao($con);
-    return $resultado;
+    return $sql;
+}
+
+//Função para exibir todos os lançamentos de estoque de um produto
+function exibe_lancamentos_all_prod($id_produto){
+    $sql = "SELECT id_lancamento, nome_produto, quant_recebida, preco_custo_un, data_lancamento FROM lancamento_estoque WHERE id_produto='$id_produto' ORDER BY id_lancamento DESC";
+    return $sql;
+}
+
+//Função para exibir lançamentos de estoque de um produto por dia específico
+function exibe_lancamentos_data_prod($id_produto, $data){ 
+    $sql = "SELECT id_lancamento, nome_produto, quant_recebida, preco_custo_un, data_lancamento FROM lancamento_estoque WHERE data_lancamento = '$data' AND id_produto='$id_produto' ORDER BY id_lancamento DESC";
+    return $sql;
+}
+
+//Função para exibir lançamentos de estoque de um produto a partir de um período
+function exibe_lancamentos_periodo_prod($id_produto, $inicio, $fim){
+    $sql = "SELECT id_lancamento, nome_produto, quant_recebida, preco_custo_un, data_lancamento FROM lancamento_estoque WHERE data_lancamento BETWEEN '$inicio' AND '$fim' AND id_produto='$id_produto' ORDER BY id_lancamento DESC";
+    return $sql;
 }
 
 /* --- FIM DAS FUNÇÕES DA TABELA LANÇAMETO_ESTOQUE --- */
@@ -406,7 +417,7 @@ function exclui_cliente($id_cliente){
 //Função para recuperação de todos os clientes
 function exibe_clientes_all(){
     require_once("../00 - BD/bd_conexao.php");
-    $sql="SELECT cli.id_cliente, cli.nome as nome_cliente, cad.id_caderneta, cad.data_abertura, cad.status_caderneta, FROM cliente as cli, caderneta as cad WHERE cli.id_cliente=cad.id_cliente order by cli.nome ASC;";
+    $sql="SELECT cli.id_cliente, cli.nome as nome_cliente, cad.id_caderneta, cad.data_abertura, cad.status_caderneta FROM cliente as cli, caderneta as cad WHERE cli.id_cliente=cad.id_cliente order by cli.nome ASC;";
     $con->query($sql);
     $resultado=$con->query($sql);
     fecharConexao($con);
@@ -424,9 +435,9 @@ function exibe_clientes_atrasos(){
 }
 
 //Função para recuperar clientes compatíveis com o nome pesquisado
-function exibe_clinetes_src($id_cliente){
+function exibe_clientes_by_nome($nome_cliente){
     require_once("../00 - BD/bd_conexao.php");
-    $sql="SELECT cli.id_cliente, cli.nome as nome_cliente, cad.id_caderneta, cad.data_abertura, cad.status_caderneta, FROM cliente as cli, caderneta as cad WHERE cli.id_cliente=cad.id_cliente AND cli.id_cliente='$id_cliente' order by cli.nome ASC;";
+    $sql="SELECT cli.id_cliente, cli.nome as nome_cliente, cad.id_caderneta, cad.data_abertura, cad.status_caderneta, FROM cliente as cli, caderneta as cad WHERE cli.id_cliente=cad.id_cliente AND cli.nome LIKE '%$nome_cliente%' order by cli.nome ASC;";
     $con->query($sql);
     $resultado=$con->query($sql);
     fecharConexao($con);
