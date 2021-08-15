@@ -36,7 +36,7 @@
       <?php
         if(isset($_POST['pesquisa_nome']) && !empty($_POST['nome_cliente'])){
           $nome=$_POST['nome_cliente'];
-          $sql=exibe_clinetes_by_nome($nome);
+          $sql=exibe_clientes_by_nome($nome);
         }
         else{
           $sql=exibe_clientes_all();
